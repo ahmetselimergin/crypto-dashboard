@@ -92,6 +92,317 @@
      border-color: #2563eb;
 }
 
+.telegramSettings {
+     background-color: #1f2937;
+     border-radius: 8px;
+     padding: 20px;
+     margin-bottom: 24px;
+     border: 1px solid #374151;
+}
+
+.telegramHeader {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     margin-bottom: 16px;
+}
+
+.telegramTitle {
+     font-size: 18px;
+     font-weight: 600;
+     margin: 0;
+     color: #f3f4f6;
+}
+
+.telegramToggle {
+     position: relative;
+     display: inline-block;
+     width: 50px;
+     height: 24px;
+}
+
+.telegramToggle input {
+     opacity: 0;
+     width: 0;
+     height: 0;
+}
+
+.toggleSlider {
+     position: absolute;
+     cursor: pointer;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background-color: #374151;
+     transition: 0.3s;
+     border-radius: 24px;
+}
+
+.toggleSlider:before {
+     position: absolute;
+     content: "";
+     height: 18px;
+     width: 18px;
+     left: 3px;
+     bottom: 3px;
+     background-color: white;
+     transition: 0.3s;
+     border-radius: 50%;
+}
+
+.telegramToggle input:checked+.toggleSlider {
+     background-color: #3b82f6;
+}
+
+.telegramToggle input:checked+.toggleSlider:before {
+     transform: translateX(26px);
+}
+
+.telegramForm {
+     display: flex;
+     flex-direction: column;
+     gap: 16px;
+}
+
+.inputGroup {
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+}
+
+.inputGroup label {
+     font-size: 14px;
+     font-weight: 500;
+     color: #9ca3af;
+}
+
+.inputGroup input {
+     padding: 10px 12px;
+     border: 1px solid #374151;
+     border-radius: 6px;
+     background-color: #111827;
+     color: #f3f4f6;
+     font-size: 14px;
+}
+
+.inputGroup input:focus {
+     outline: none;
+     border-color: #3b82f6;
+     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.readonlyInput {
+     background-color: #374151 !important;
+     color: #9ca3af !important;
+     cursor: not-allowed;
+}
+
+.helpText {
+     font-size: 12px;
+     color: #6b7280;
+     margin-top: 4px;
+}
+
+.inputWithHelp {
+     display: flex;
+     gap: 8px;
+     align-items: center;
+}
+
+.inputWithHelp input {
+     flex: 1;
+}
+
+.helpButton {
+     width: 24px;
+     height: 24px;
+     border-radius: 50%;
+     background-color: #6b7280;
+     color: white;
+     border: none;
+     cursor: pointer;
+     font-weight: bold;
+     font-size: 14px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     transition: background-color 0.2s;
+}
+
+.helpButton:hover {
+     background-color: #4b5563;
+}
+
+.saveButton {
+     padding: 10px 16px;
+     background-color: #3b82f6;
+     color: white;
+     border: none;
+     border-radius: 6px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: background-color 0.2s;
+}
+
+.saveButton:hover {
+     background-color: #2563eb;
+}
+
+/* Modal Styles */
+.modalOverlay {
+     position: fixed;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background-color: rgba(0, 0, 0, 0.8);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 1000;
+}
+
+.modalContent {
+     background-color: #1f2937;
+     border-radius: 12px;
+     max-width: 600px;
+     width: 90%;
+     max-height: 80vh;
+     overflow-y: auto;
+     border: 1px solid #374151;
+}
+
+.modalHeader {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 20px 24px;
+     border-bottom: 1px solid #374151;
+}
+
+.modalHeader h3 {
+     margin: 0;
+     color: #f3f4f6;
+     font-size: 20px;
+     font-weight: 600;
+}
+
+.modalClose {
+     background: none;
+     border: none;
+     color: #9ca3af;
+     font-size: 24px;
+     cursor: pointer;
+     padding: 0;
+     width: 32px;
+     height: 32px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border-radius: 50%;
+     transition: all 0.2s;
+}
+
+.modalClose:hover {
+     background-color: #374151;
+     color: #f3f4f6;
+}
+
+.modalBody {
+     padding: 24px;
+}
+
+.helpSteps {
+     margin: 0;
+     padding-left: 20px;
+     color: #f3f4f6;
+}
+
+.helpSteps li {
+     margin-bottom: 20px;
+     line-height: 1.6;
+}
+
+.helpSteps strong {
+     color: #3b82f6;
+     display: block;
+     margin-bottom: 8px;
+}
+
+.helpSteps p {
+     margin: 8px 0;
+     color: #d1d5db;
+}
+
+.apiUrl {
+     background-color: #111827;
+     border: 1px solid #374151;
+     border-radius: 8px;
+     padding: 16px;
+     margin: 12px 0;
+     display: flex;
+     align-items: center;
+     gap: 12px;
+}
+
+.apiUrl code {
+     background-color: #374151;
+     padding: 8px 12px;
+     border-radius: 6px;
+     color: #f3f4f6;
+     font-family: monospace;
+     flex: 1;
+     word-break: break-all;
+}
+
+.copyButton {
+     background-color: #3b82f6;
+     color: white;
+     border: none;
+     padding: 8px 16px;
+     border-radius: 6px;
+     cursor: pointer;
+     font-weight: 600;
+     white-space: nowrap;
+     transition: background-color 0.2s;
+}
+
+.copyButton:hover {
+     background-color: #2563eb;
+}
+
+.note {
+     background-color: #1e40af;
+     border: 1px solid #3b82f6;
+     border-radius: 6px;
+     padding: 12px;
+     margin-top: 12px;
+     color: #dbeafe;
+}
+
+.modalFooter {
+     padding: 20px 24px;
+     border-top: 1px solid #374151;
+     display: flex;
+     justify-content: flex-end;
+}
+
+.modalButton {
+     background-color: #3b82f6;
+     color: white;
+     border: none;
+     padding: 12px 24px;
+     border-radius: 6px;
+     cursor: pointer;
+     font-weight: 600;
+     transition: background-color 0.2s;
+}
+
+.modalButton:hover {
+     background-color: #2563eb;
+}
+
 .loadingContainer {
      display: flex;
      align-items: center;

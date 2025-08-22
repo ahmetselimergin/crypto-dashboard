@@ -47,6 +47,62 @@ const SignalDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTable, setSelectedTable] = useState("b7"); // Default to b7
+  const [lastSignalId, setLastSignalId] = useState(null); // Son sinyal ID'sini takip et
+  const [telegramEnabled, setTelegramEnabled] = useState(false); // Telegram bildirimleri aktif/pasif
+  const [telegramSettings, setTelegramSettings] = useState({
+    botToken: "8123835785:AAHvgbAZy4E_PbF7rAW78DhxwERhJXbiV8I",
+    chatId: "",
+  });
+  const [showHelpModal, setShowHelpModal] = useState(false); // Yardım modal'ı için state
+
+  // Telegram bildirimi gönder
+  const sendTelegramNotification = async (signal) => {
+    if (
+      !telegramEnabled ||
+      !telegramSettings.botToken ||
+      !telegramSettings.chatId
+    )
+      return;
+
+    try {
+      await fetch("/api/telegram", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          signal: signal.signal,
+          price: signal.price,
+          table: selectedTable,
+          message: signal.message,
+          strength: signal.strength,
+          ml_confidence: signal.ml_confidence,
+          botToken: telegramSettings.botToken,
+          chatId: telegramSettings.chatId,
+        }),
+      });
+    } catch (err) {
+      console.error("Telegram bildirimi gönderilemedi:", err);
+    }
+  };
+
+  // Yeni sinyal kontrolü ve bildirim
+  const checkNewSignals = (newData) => {
+    if (newData.length > 0 && lastSignalId !== null) {
+      // Yeni sinyalleri kontrol et
+      const newSignals = newData.filter((item) => {
+        // Timestamp'e göre yeni olanları bul
+        const itemTime = new Date(item.timestamp).getTime();
+        const lastTime = new Date(signalData[0]?.timestamp || 0).getTime();
+        return itemTime > lastTime;
+      });
+
+      // Yeni sinyalleri Telegram'a gönder
+      newSignals.forEach((signal) => {
+        sendTelegramNotification(signal);
+      });
+    }
+  };
 
   // API'den veri çekme fonksiyonu
   const fetchSignalData = async (table = selectedTable) => {
@@ -85,6 +141,8 @@ const SignalDashboard = () => {
               : "#f59e0b",
         }));
         setSignalData(formattedData);
+        setLastSignalId(formattedData[0]?.id || null); // Son sinyal ID'sini güncelle
+        checkNewSignals(formattedData); // Yeni sinyalleri kontrol et
       }
     } catch (err) {
       setError("Veri yüklenirken hata oluştu: " + err.message);
@@ -102,6 +160,19 @@ const SignalDashboard = () => {
   useEffect(() => {
     fetchSignalData();
     const interval = setInterval(() => fetchSignalData(), 30000);
+
+    // Telegram ayarlarını localStorage'dan yükle
+    const savedSettings = localStorage.getItem("telegramSettings");
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        setTelegramSettings(parsed);
+        setTelegramEnabled(true);
+      } catch (err) {
+        console.error("Telegram ayarları yüklenemedi:", err);
+      }
+    }
+
     return () => clearInterval(interval);
   }, [selectedTable]);
 
@@ -165,6 +236,77 @@ const SignalDashboard = () => {
               B7
             </button>
           </div>
+        </div>
+
+        {/* Telegram Bildirim Ayarları */}
+        <div className={styles.telegramSettings}>
+          <div className={styles.telegramHeader}>
+            <h3 className={styles.telegramTitle}>Telegram Bildirimleri</h3>
+            <label className={styles.telegramToggle}>
+              <input
+                type="checkbox"
+                checked={telegramEnabled}
+                onChange={(e) => setTelegramEnabled(e.target.checked)}
+              />
+              <span className={styles.toggleSlider}></span>
+            </label>
+          </div>
+
+          {telegramEnabled && (
+            <div className={styles.telegramForm}>
+              <div className={styles.inputGroup}>
+                <label>Bot Token:</label>
+                <input
+                  type="text"
+                  value={telegramSettings.botToken}
+                  readOnly
+                  className={styles.readonlyInput}
+                />
+                <small className={styles.helpText}>
+                  Bot token otomatik ayarlandı
+                </small>
+              </div>
+              <div className={styles.inputGroup}>
+                <label>Chat ID:</label>
+                <div className={styles.inputWithHelp}>
+                  <input
+                    type="text"
+                    placeholder="Chat ID'nizi girin"
+                    value={telegramSettings.chatId}
+                    onChange={(e) =>
+                      setTelegramSettings((prev) => ({
+                        ...prev,
+                        chatId: e.target.value,
+                      }))
+                    }
+                  />
+                  <button
+                    type="button"
+                    className={styles.helpButton}
+                    onClick={() => setShowHelpModal(true)}
+                    title="Chat ID nasıl bulunur?"
+                  >
+                    ?
+                  </button>
+                </div>
+                <small className={styles.helpText}>
+                  Telegram grubunuzun veya DM'inizin Chat ID'si
+                </small>
+              </div>
+              <button
+                className={styles.saveButton}
+                onClick={() => {
+                  localStorage.setItem(
+                    "telegramSettings",
+                    JSON.stringify(telegramSettings)
+                  );
+                  alert("Telegram ayarları kaydedildi!");
+                }}
+              >
+                Ayarları Kaydet
+              </button>
+            </div>
+          )}
         </div>
 
         <h1 className={styles.title}>
@@ -579,6 +721,59 @@ const SignalDashboard = () => {
           </button>
         </div>
       </div>
+
+      {/* Chat ID Yardım Modal'ı */}
+      {showHelpModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowHelpModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3>Chat ID Nasıl Bulunur?</h3>
+              <button 
+                className={styles.modalClose}
+                onClick={() => setShowHelpModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <ol className={styles.helpSteps}>
+                <li>
+                  <strong>Bot'u gruba ekleyin veya DM gönderin:</strong>
+                  <p>Telegram'da bot'u (@bot_username) grubunuza ekleyin veya bot'a özel mesaj gönderin</p>
+                </li>
+                <li>
+                  <strong>Tarayıcıda şu adrese gidin:</strong>
+                  <div className={styles.apiUrl}>
+                    <code>https://api.telegram.org/bot8123835785:AAHvgbAZy4E_PbF7rAW78DhxwERhJXbiV8I/getUpdates</code>
+                    <button 
+                      className={styles.copyButton}
+                      onClick={() => {
+                        navigator.clipboard.writeText('https://api.telegram.org/bot8123835785:AAHvgbAZy4E_PbF7rAW78DhxwERhJXbiV8I/getUpdates');
+                        alert('URL kopyalandı!');
+                      }}
+                    >
+                      Kopyala
+                    </button>
+                  </div>
+                </li>
+                <li>
+                  <strong>Chat ID'yi bulun:</strong>
+                  <p>Sayfada <code>"chat":{"id":123456789}</code> formatında ID'yi bulun</p>
+                  <p className={styles.note}>Not: Eğer hiç mesaj yoksa, önce bot'a bir mesaj gönderin</p>
+                </li>
+              </ol>
+            </div>
+            <div className={styles.modalFooter}>
+              <button 
+                className={styles.modalButton}
+                onClick={() => setShowHelpModal(false)}
+              >
+                Anladım
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
