@@ -138,7 +138,15 @@ const SignalDashboard = () => {
       <div className={styles.container}>
         {/* Table Toggle */}
         <div className={styles.tableToggle}>
-          <h3 className={styles.toggleTitle}>Veri Tablosu Seçimi:</h3>
+          <div className={styles.toggleHeader}>
+            <h3 className={styles.toggleTitle}>Veri Tablosu Seçimi:</h3>
+            <div className={styles.currentTableInfo}>
+              <span className={styles.currentTableLabel}>Şu an aktif:</span>
+              <span className={styles.currentTableValue}>
+                {selectedTable.toUpperCase()}
+              </span>
+            </div>
+          </div>
           <div className={styles.toggleButtons}>
             <button
               className={`${styles.toggleButton} ${
@@ -159,10 +167,21 @@ const SignalDashboard = () => {
           </div>
         </div>
 
-        <h1 className={styles.title}>Crypto Trading Signal Dashboard</h1>
+        <h1 className={styles.title}>
+          Crypto Trading Signal Dashboard - {selectedTable.toUpperCase()}{" "}
+          Tablosu
+        </h1>
 
         {/* Üst Bilgi Kartları */}
         <div className={styles.statsGrid}>
+          {/* Aktif Tablo Bilgisi */}
+          <div className={styles.statCard}>
+            <h3 className={styles.statTitle}>Aktif Tablo</h3>
+            <p className={styles.statValue + " " + styles.activeTableValue}>
+              {selectedTable.toUpperCase()}
+            </p>
+          </div>
+
           <div className={styles.statCard}>
             <h3 className={styles.statTitle}>Son Fiyat</h3>
             <p className={styles.statValue + " " + styles.priceValue}>
