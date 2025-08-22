@@ -17,6 +17,57 @@
      text-align: center;
 }
 
+.tableToggle {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 16px;
+     margin-bottom: 24px;
+     padding: 16px;
+     background-color: #1f2937;
+     border-radius: 8px;
+}
+
+.toggleTitle {
+     font-size: 16px;
+     font-weight: 600;
+     margin: 0;
+     color: #9ca3af;
+}
+
+.toggleButtons {
+     display: flex;
+     gap: 8px;
+}
+
+.toggleButton {
+     padding: 8px 16px;
+     border: 2px solid #374151;
+     background-color: #374151;
+     color: #9ca3af;
+     border-radius: 6px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: all 0.2s ease;
+}
+
+.toggleButton:hover {
+     background-color: #4b5563;
+     border-color: #4b5563;
+     color: white;
+}
+
+.activeToggle {
+     background-color: #3b82f6;
+     border-color: #3b82f6;
+     color: white;
+}
+
+.activeToggle:hover {
+     background-color: #2563eb;
+     border-color: #2563eb;
+}
+
 .loadingContainer {
      display: flex;
      align-items: center;

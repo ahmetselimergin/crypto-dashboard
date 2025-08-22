@@ -46,12 +46,13 @@ const SignalDashboard = () => {
   const [signalData, setSignalData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedTable, setSelectedTable] = useState("b7"); // Default to b7
 
   // API'den veri çekme fonksiyonu
-  const fetchSignalData = async () => {
+  const fetchSignalData = async (table = selectedTable) => {
     try {
       setLoading(true);
-      const response = await fetch("/api/signals");
+      const response = await fetch(`/api/signals?table=${table}`);
       const data = await response.json();
 
       if (data.data && Array.isArray(data.data)) {
@@ -92,11 +93,17 @@ const SignalDashboard = () => {
     }
   };
 
+  // Table değiştiğinde veriyi yeniden çek
+  const handleTableChange = (table) => {
+    setSelectedTable(table);
+    fetchSignalData(table);
+  };
+
   useEffect(() => {
     fetchSignalData();
-    const interval = setInterval(fetchSignalData, 30000);
+    const interval = setInterval(() => fetchSignalData(), 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedTable]);
 
   if (loading) {
     return (
@@ -129,6 +136,29 @@ const SignalDashboard = () => {
   return (
     <div className={styles.dashboard}>
       <div className={styles.container}>
+        {/* Table Toggle */}
+        <div className={styles.tableToggle}>
+          <h3 className={styles.toggleTitle}>Veri Tablosu Seçimi:</h3>
+          <div className={styles.toggleButtons}>
+            <button
+              className={`${styles.toggleButton} ${
+                selectedTable === "b2" ? styles.activeToggle : ""
+              }`}
+              onClick={() => handleTableChange("b2")}
+            >
+              B2
+            </button>
+            <button
+              className={`${styles.toggleButton} ${
+                selectedTable === "b7" ? styles.activeToggle : ""
+              }`}
+              onClick={() => handleTableChange("b7")}
+            >
+              B7
+            </button>
+          </div>
+        </div>
+
         <h1 className={styles.title}>Crypto Trading Signal Dashboard</h1>
 
         {/* Üst Bilgi Kartları */}
@@ -522,7 +552,10 @@ const SignalDashboard = () => {
 
         {/* Manuel Yenileme Butonu */}
         <div className={styles.buttonContainer}>
-          <button onClick={fetchSignalData} className={styles.refreshButton}>
+          <button
+            onClick={() => fetchSignalData(selectedTable)}
+            className={styles.refreshButton}
+          >
             Verileri Yenile
           </button>
         </div>
